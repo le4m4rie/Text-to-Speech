@@ -1,5 +1,5 @@
 site_name: Seminar Aktuelle Themen der künstlichen Intelligenz
-pages:
+nav:
 - Startseite: index.md
 theme: material
 markdown_extensions:
