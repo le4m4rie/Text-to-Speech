@@ -26,4 +26,4 @@ mkdocs serve
 ```
 * We use a GitHub action to automatically deploy the website after pushing to the online repository
 
-The idea for this course website is based on [https://github.com/pp4rs/2022-uzh/](https://github.com/pp4rs/2022-uzh/)
+The idea for this course website is based on [https://github.com/pp4rs/2022-uzh/](https://github.com/pp4rs/2022-uzh/).

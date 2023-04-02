@@ -1,0 +1,8 @@
+site_name: Seminar Aktuelle Themen der künstlichen Intelligenz
+pages:
+- Startseite: index.md
+theme: material
+markdown_extensions:
+  - admonition
+  - pymdownx.superfences
+  - attr_list
