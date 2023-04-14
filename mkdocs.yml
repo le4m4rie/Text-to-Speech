@@ -1,8 +1,19 @@
 site_name: Seminar Aktuelle Themen der künstlichen Intelligenz
 nav:
-- Startseite: index.md
-theme: material
+- Aktuelles: index.md
+- ...
+
+theme: 
+  name: material
+  features:
+    - navigation: expand
+
 markdown_extensions:
   - admonition
   - pymdownx.superfences
   - attr_list
+
+plugins:
+  - search
+  - awesome-pages:
+      collapse_single_pages: false
