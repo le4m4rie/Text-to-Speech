@@ -1,4 +1,6 @@
-# Herzlich Willkommen auf der Seminarwebseite
+# Seminar Aktuelle Themen der künstlichen Intelligenz
+
+Herzlich Willkommen auf der Kurswebseite des Kurses "Aktuelle Themen der künstlichen Intelligenz" des Studiengangs Künstliche Intelligenz der Technischen Hochschule Deggendorf. 
 
 Im Seminar aktuelle Themen der KI erarbeiten Studierende zu einem Thema ein Dreiergruppen
 

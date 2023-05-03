@@ -2,6 +2,7 @@ site_name: Seminar Aktuelle Themen der künstlichen Intelligenz
 nav:
 - Aktuelles: index.md
 - ...
+- Impressum: impressum.md
 
 theme: 
   name: material
@@ -18,3 +19,4 @@ plugins:
   - search
   - awesome-pages:
       collapse_single_pages: false
+
