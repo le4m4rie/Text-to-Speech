@@ -7,6 +7,8 @@
 *   Institute: [Department of Applied Computer Science, Deggendorf University of Technology](https://th-deg.de/ai)
 *   Current Version: [Summer 2023](https://ki-seminar.github.io/23s)
 
+## Link to the Course Website
+You can have a look at the [Course Website](https://ki-seminar.github.io/23s/)
 
 ## Building the Site
 
