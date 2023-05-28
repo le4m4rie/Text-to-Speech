@@ -162,11 +162,79 @@ Die Grafik zeigt eine Vorhersage mit Hilfe des SARIMA Modells für den Beispiel 
 
 ### 2.4 Moderne Ansätze
 
-#### RNN
+Moderne Ansätze in der Zeitreihenanalyse haben in den letzten Jahren an Bedeutung gewonnen und bieten erweiterte Möglichkeiten zur Modellierung und Vorhersage von Zeitreihendaten. Neuronale Netze, insbesondere rekurrente neuronale Netze (RNNs) wie Long Short-Term Memory (LSTM) oder Gated Recurrent Units (GRUs), haben sich als leistungsstarke Werkzeuge für die Modellierung von Zeitreihendaten erwiesen. Diese Modelle können komplexe nichtlineare Muster erfassen und sind in der Lage, langfristige Abhängigkeiten in den Daten zu berücksichtigen.
 
-#### LSTM
+#### Recurrent Neural Networks
 
-***TODO:*** Stephan
+Simple RNNs (Recurrent Neural Networks) sind eine Art von neuronalen Netzwerken, die für die Analyse von Zeitreihendaten verwendet werden. Im Gegensatz zu herkömmlichen neuronalen Netzwerken, die nur eine sequenzielle Verarbeitung von Daten ermöglichen, haben RNNs die Fähigkeit, Informationen über vergangene Schritte beizubehalten und in zukünftigen Schritten zu verwenden.
+
+<figure markdown>
+  ![SRNN](./img/Zeitserienanalyse/sRNN.png){ width="150" }
+  <figcaption>Fig. 8 Simple RNN</figcaption>
+</figure>
+
+Die grundlegende Struktur eines einfachen RNNs besteht aus einer Schleife, die es ermöglicht, Informationen über vergangene Zeitschritte zu speichern und zurückzugeben. Bei der Verarbeitung von Zeitreihendaten wird das RNN für jeden Zeitschritt in der Sequenz iterativ ausgeführt. Für jeden Zeitschritt werden sowohl der aktuelle Eingabewert als auch der vorherige Zustand des RNNs als Eingabe verwendet, um den Ausgabewert zu generieren. Der Ausgabewert kann entweder als Vorhersage für den nächsten Zeitschritt oder als Teil eines umfassenderen Vorhersagemodells verwendet werden.
+
+Die Hauptvorteile von einfachen RNNs für die Zeitreihenanalyse liegen in ihrer Fähigkeit, zeitliche Abhängigkeiten und Muster in den Daten zu erfassen. Durch die Verwendung des vorherigen Zustands als zusätzliche Information kann das RNN kontextbezogene Vorhersagen treffen und komplexe Muster in den Daten erkennen. Beispielsweise würde ein simple RNN im Satz "Die Wolken sind im _______", das Wort *Himmel* sehr leicht aus dem Kontext einfügen können.
+
+<figure markdown>
+  ![SRNN 2](./img/Zeitserienanalyse/sRNN_2.png){ width="600" }
+  <figcaption>Fig. 9 Kurzer Kontext</figcaption>
+</figure>
+
+Es gibt jedoch auch einige Herausforderungen bei der Verwendung von einfachen RNNs für Zeitreihendaten. Ein Problem ist das sogenannte "Vanishing Gradient"-Problem, bei dem die Gradienten während des Trainings exponentiell abnehmen und dazu führen können, dass vergangene Informationen nicht gut in die Vorhersagen einbezogen werden. Dies kann die Fähigkeit des RNNs zur Modellierung langfristiger Abhängigkeiten beeinträchtigen. So wird es bei dem Satz "Die Wolken, die verschiedene Größen und Graustufen haben, sind im _______", sehr schwer das Wort *Himmel* aus dem Kontext einzusetzen.
+
+<figure markdown>
+  ![SRNN 3](./img/Zeitserienanalyse/sRNN_3.png){ width="600" }
+  <figcaption>Fig. 10 Langer Kontext</figcaption>
+</figure>
+
+Um das Vanishing Gradient-Problem zu überwinden und die Leistung von RNNs zu verbessern, wurden verschiedene Weiterentwicklungen vorgeschlagen, wie zum Beispiel Long Short-Term Memory (LSTM) und Gated Recurrent Units (GRU). Diese Modelle verwenden spezielle Strukturen, um das Gedächtnis der RNNs zu verbessern und langfristige Abhängigkeiten besser zu erfassen.
+
+#### Long Short Term Memory RNNs
+
+LSTM (Long Short-Term Memory) ist eine Weiterentwicklung von RNNs (Recurrent Neural Networks) und wurde entwickelt, um das Problem des "Vanishing Gradient" zu lösen und langfristige Abhängigkeiten in Zeitreihendaten besser zu erfassen. LSTM-RNNs haben sich als äußerst effektiv für die Zeitreihenanalyse erwiesen.
+
+<figure markdown>
+  ![LSTM](./img/Zeitserienanalyse/LSTM.png){ width="800" }
+  <figcaption>Fig. 11 Simple RNN vs LSTM Architektur</figcaption>
+</figure>
+
+Der wesentliche Unterschied zwischen LSTM und einfachen RNNs besteht darin, dass LSTM über eine sogenannte "Gedächtniszelle" und "Gatter" verfügt. Diese ermöglichen es, Informationen über lange Zeitschritte hinweg zu speichern und zu vergessen. Diese spezielle Architektur ermöglicht es LSTM Modellen, wichtige Informationen zu behalten und irrelevante Informationen zu verwerfen.
+
+- Gedächtniszelle (Memory Cell):  
+  Die Memory Cell besteht aus einer internen Zellzustandsvariable, die Informationen über den aktuellen Zustand der Gedächtniszelle enthält. Diese Variable wird während der Verarbeitung der Zeitreihe aktualisiert und kann Informationen über relevante Muster und Abhängigkeiten speichern.
+
+<figure markdown>
+  ![LSTM 2](./img/Zeitserienanalyse/LSTM_2.png){ width="400" }
+  <figcaption>Fig. 12 Memory Cell</figcaption>
+</figure>
+
+- Eingangsgatter (Input Gate):  
+  Das Eingangsgatter regelt, welche Informationen aus dem aktuellen Zeitschritt in das Zellgedächtnis übernommen werden sollen. Es verwendet eine Sigmoid-Aktivierungsfunktion, um zu bestimmen, welche Werte aktualisiert werden sollen.
+
+<figure markdown>
+  ![LSTM 3](./img/Zeitserienanalyse/LSTM_3.png){ width="400" }
+  <figcaption>Fig. 13 Input Gate</figcaption>
+</figure>
+
+- Vergessensgatter (Forget Gate):  
+  Das Vergessensgatter bestimmt, welche Informationen aus dem vorherigen Zustand des LSTM verworfen werden sollen. Es hilft dabei, irrelevante Informationen zu vergessen und relevante Informationen beizubehalten. Es verwendet auch eine Sigmoid-Aktivierungsfunktion, um zu bestimmen, welche Werte verworfen werden sollen.
+
+<figure markdown>
+  ![LSTM 4](./img/Zeitserienanalyse/LSTM_4.png){ width="400" }
+  <figcaption>Fig. 14 Forget Gate</figcaption>
+</figure>
+
+- Ausgangsgatter (Output Gate):  
+  Das Ausgangsgatter bestimmt, welche Informationen aus dem aktuellen Zeitschritt als Ausgabe verwendet werden sollen. Es verwendet sowohl die vorherigen Zustände des LSTM als auch die aktualisierten Werte des Eingangsgatters und der Zellaktivierungsfunktion, um die Ausgabe zu generieren.
+  
+<figure markdown>
+  ![LSTM 5](./img/Zeitserienanalyse/LSTM_5.png){ width="400" }
+  <figcaption>Fig. 15 Output Gate</figcaption>
+</figure>
+
+Durch die Verwendung dieser Architektur kann ein LSTM Informationen über lange Zeitschritte hinweg behalten und langfristige Abhängigkeiten in den Daten erfassen. Es kann wichtige Muster und Zusammenhänge in der Zeitreihe erkennen und diese Informationen zur Vorhersage zukünftiger Werte verwenden.
 
 ## 3 Anwendungen
 ***TODO:*** Julian
@@ -176,17 +244,19 @@ Die Grafik zeigt eine Vorhersage mit Hilfe des SARIMA Modells für den Beispiel 
 
 ## 5 Weiterführendes Material
 
-### Podcast
+### 5.1 Podcast
 Hier Link zum Podcast.
 
-### Talk
+### 5.2 Talk
 Hier einfach Youtube oder THD System embedden.
 
-### Demo
+### 5.3 Demo
 Hier Link zum Demo Video + Link zum GIT Repository mit dem Demo Code.
 
 
 ## 6 Literaturliste
-Hier können Sie auf weiterführende Literatur verlinken. 
+[Fathi M. Salem. (2022). Recurrent Neural Networks From Simple to Gated Architectures. Springer.](https://link.springer.com/book/10.1007/978-3-030-89929-5#bibliographic-information)
 
-***TODO:*** Stephan
+[Huang, C (2022). Applied Time Series Analysis and Forecasting with Python. Springer.](https://link.springer.com/book/10.1007/978-3-031-13584-2)
+
+[National Institute of Standards and Technologies. Introduction to Time Series Analysis.](https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc4.htm)
