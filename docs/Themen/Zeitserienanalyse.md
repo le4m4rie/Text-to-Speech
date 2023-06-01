@@ -11,13 +11,13 @@ von *Andreas Greiner, Julian Ivanov und Stephan Zahnweh*
 
 ## 2 Methoden
 
-Bei der Recherche rund um das Theam Zeitserienanlyse stößt man immer wieder auf eine mögliche Definition für Zeitserien.
+Bei der Recherche rund um das Thema Zeitserienanalyse stößt man immer wieder auf eine mögliche Definition für Zeitserien.
 
 !!! info "Definition"
 
     Die Zeitserienanalyse trägt der Tatsache Rechnung, dass Datenpunkte, die im Laufe der Zeit aufgenommen wurden, eine interne Struktur aufweisen können (wie Autokorrelation, Trend oder saisonale Schwankungen), die berücksichtigt werden sollte.
 
-Damit grenzt sich diese von anderen Datenanalysen ohne Zeitkomponente ab. Im Folgenden werden die internen Strukturen von Zeitsereien näher erläutert.
+Damit grenzt sich diese von anderen Datenanalysen ohne Zeitkomponente ab. Im Folgenden werden die internen Strukturen von Zeitserien näher erläutert.
 
 
 ### 2.1 Merkmale von Zeitserien
@@ -26,14 +26,24 @@ Hier werden die Merkmale von Zeitserien (Autokorrelation, Trend und Saison) besc
 
 #### Autokorrelation
 
-Autokorrelation bezieht sich auf die statistische Beziehung oder Ähnlichkeit zwischen den Werten einer Zeitreihe und ihren verzögerten Versionen. In einer Zeitreihe werden aufeinanderfolgende Beobachtungen in regelmäßigen Zeitintervallen erfasst. Autokorrelation misst die Stärke und Richtung des linearen Zusammenhangs zwischen den Werten einer Zeitreihe und den Werten zu verschiedenen Verzögerungszeiten. Zum veranschaulichen dieser und eiterer Methoden wird ein Beispiel Datensatz (Fig. 1) verwendet. Hierbei handelt es sich um einen Datensatz mit monatlich gemessenen CO2 ausstoß über mehrere Jahre hinweg. 
+Autokorrelation bezieht sich auf die statistische Beziehung oder Ähnlichkeit zwischen den Werten einer Zeitreihe und ihren verzögerten Versionen. In einer Zeitreihe werden aufeinanderfolgende Beobachtungen in regelmäßigen Zeitintervallen erfasst. Autokorrelation misst die Stärke und Richtung des linearen Zusammenhangs zwischen den Werten einer Zeitreihe und den Werten zu verschiedenen Verzögerungszeiten. Zum Veranschaulichen dieser und weiterer Methoden wird ein Beispiel Datensatz (Fig. 1) verwendet. Hierbei handelt es sich um einen Datensatz mit monatlich gemessenen CO2 Ausstoß über mehrere Jahre hinweg. 
 
 <figure markdown>
   ![CO2 Data](./img/Zeitserienanalyse/data.png){ width="400" }
   <figcaption>Fig. 1 Beispiel Datensatz</figcaption>
 </figure>
 
-Die Autokorrelationsfunktion (ACF) zeigt den Autokorrelationskoeffizient für verschieden Verzögerungen. Er ist ein Maß für die Autokorrelation. Er variiert zwischen -1 und 1. Ein Wert von 1 zeigt eine perfekte positive Autokorrelation an, was bedeutet, dass eine hohe Ähnlichkeit zwischen den Werten der Zeitreihe und ihren verzögerten Versionen besteht. Ein Wert von -1 zeigt eine perfekte negative Autokorrelation an, was darauf hindeutet, dass die Werte der Zeitreihe und ihre verzögerten Versionen genau entgegengesetzte Muster aufweisen. Ein Wert von 0 deutet auf keine Autokorrelation hin, was bedeutet, dass es keine systematische Beziehung zwischen den Werten und ihren Verzögerungen gibt.
+Die Autokorrelationsfunktion (ACF) zeigt den Autokorrelationskoeffizient $r_k$ für verschieden Verzögerungen $k$. Er ist ein Maß für die Autokorrelation und berechnet sich wie folgt: 
+
+$$
+r_k = \frac{\sum_{t=k+1}^{n} (y_t - ӯ)(y_{t-k} - ӯ)}{\sum_{t=1}^{n} (y_t - ӯ)^2}
+$$
+
+$$
+ӯ = \frac{1}{n}\sum_{t=1}^{n}(y_t)
+$$
+
+Er variiert zwischen -1 und 1. Ein Wert von 1 zeigt eine perfekte positive Autokorrelation an, was bedeutet, dass eine hohe Ähnlichkeit zwischen den Werten der Zeitreihe und ihren verzögerten Versionen besteht. Ein Wert von -1 zeigt eine perfekte negative Autokorrelation an, was darauf hindeutet, dass die Werte der Zeitreihe und ihre verzögerten Versionen genau entgegengesetzte Muster aufweisen. Ein Wert von 0 deutet auf keine Autokorrelation hin, was bedeutet, dass es keine systematische Beziehung zwischen den Werten und ihren Verzögerungen gibt. 
 
 <figure markdown>
   ![ACF Plot](./img/Zeitserienanalyse/acf.png){ width="400" }
@@ -59,7 +69,7 @@ Bei der Saison handelt es sich um wiederkehrende Muster oder periodische Schwank
 Die Zeitreihenanalyse ist ein leistungsstarkes Werkzeug zur Untersuchung und Extraktion von Informationen aus sequenziellen Daten. Sie findet in verschiedenen Anwendungsgebieten Anwendung, darunter die Analyse der Merkmale, Vorhersage, Glättung und Anomalieerkennung. Jedes dieser Gebiete spielt eine wichtige Rolle bei der Auswertung und Interpretation von Zeitreihendaten.
 
 #### Analyse der Merkmale
-Die Analyse der Merkmale befasst sich mit der Untersuchung und Identifizierung von Mustern, Trends, Saisonalität und anderen Charakteristika in einer Zeitreihe. Sie hilft dabei, grundlegende Informationen über die Daten zu gewinnen und Einblicke in vergangene Muster und Veränderungen zu gewinnen. Die Werkzeuge zur Merkmalsyanlyse wurden bereits im vorherigen Kapitel ausführlich erläutert.
+Die Analyse der Merkmale befasst sich mit der Untersuchung und Identifizierung von Mustern, Trends, Saisonalität und anderen Charakteristika in einer Zeitreihe. Sie hilft dabei, grundlegende Informationen über die Daten zu gewinnen und Einblicke in vergangene Muster und Veränderungen zu gewinnen. Die Werkzeuge zur Merkmalsanalyse wurden bereits im vorherigen Kapitel ausführlich erläutert.
 
 #### Vorhersage
 Die Vorhersage ist ein wichtiger Anwendungsbereich der Zeitreihenanalyse. Sie befasst sich mit der Schätzung zukünftiger Werte oder Ereignisse aufgrund vergangener Daten. Durch die Analyse von Trends, saisonalen Mustern und anderen Zeitreiheneigenschaften können Modelle entwickelt werden, um Vorhersagen für die Zukunft zu treffen. Methoden wie ARIMA (Autoregressive Integrated Moving Average), Exponential Smoothing und Machine-Learning-Algorithmen werden häufig verwendet, um Prognosen zu generieren. Diese Ansätze werden in den nächsten Kapiteln genauer betrachtet.
@@ -83,35 +93,65 @@ Der Hauptgedanke beim exponentiellen Glätten besteht darin, jedem Datenpunkt ei
 Der Prozess des **einfachen exponentiellen Glättens** kann in mehreren Schritten zusammengefasst werden:
 
 - Initialisierung:  
-  Der erste geschätzte Wert wird als der erste Beobachtungswert der Zeitreihe angenommen.
+  Der erst mögliche geschätzte Wert $S_2$ wird als der erste Beobachtungswert $y_1$ der Zeitreihe angenommen.
+
+$$
+S_2 = y_1
+$$
 
 - Glättungsschritt:  
   Für die folgenden Beobachtungen wird der geschätzte Wert durch die Kombination des aktuellen Beobachtungswerts und des vorherigen geschätzten Werts berechnet. Dies wird durch die Formel dargestellt:  
     
-    geschätzter Wert = (1 - a) * aktueller Wert + a * vorheriger geschätzter Wert  
+    $$
+    S_3 = \alpha y_2 + (1 - \alpha)S_2
+    $$
     
-    Dabei ist "a" der Glättungsfaktor, der angibt, wie stark der aktuelle Wert gewichtet werden soll. Ein kleinerer Wert von "a" gibt den vergangenen Werten ein höheres Gewicht, während ein größerer Wert von "a" den aktuellen Wert stärker berücksichtigt.
+    Dabei ist $\alpha$ der Glättungsfaktor, der angibt, wie stark der aktuelle Wert gewichtet werden soll. Ein kleinerer Wert von $\alpha$ gibt den vergangenen Werten ein höheres Gewicht, während ein größerer Wert von $\alpha$ den aktuellen Wert stärker berücksichtigt.
 
 - Wiederholung:  
   Dieser Glättungsschritt wird für jede Beobachtung in der Zeitreihe wiederholt, wobei der geschätzte Wert bei jedem Schritt aktualisiert wird.
+
+$$
+S_t = \alpha y_{t-1} + (1 - \alpha)S_{t-1}; 0 < \alpha \leq 1; t \geq 3
+$$
 
 <figure markdown>
   ![EXP 1](./img/Zeitserienanalyse/exp1.png){ width="800" }
   <figcaption>Fig. 4 Einfaches Exponentielles Glätten</figcaption>
 </figure>
 
-Die linke Grafik zeigt die geglättete Zeitserie und die Rechte das Ergebniss einer Vorhersage auf den in Test- und Trainingsdaten aufgeteilten Beispieldatensatz (Fig. 1). Die Vorhersagen sind nicht sonderlich gut, da sowohl Trand als auch Saison Komponenten nicht berücksichtigt werden.
+Das linke Diagramm zeigt die geglättete Zeitserie und das Rechte die Ergebnisse einer Vorhersage auf den in Test- und Trainingsdaten aufgeteilten Beispieldatensatz (Fig. 1). Die Vorhersagen sind nicht sonderlich gut, da sowohl Trend als auch Saison Komponenten nicht berücksichtigt werden.
 
-Um den Trend zu erfassen, wird das Modell um eine Trendkomponente erwitert. Hier handelt es sich um das **zweifache exponentielle Glätten**. 
+Um den Trend zu erfassen, wird das Modell um eine Trendkomponente erweitert. Hier handelt es sich um das **zweifache exponentielle Glätten**.
+
+$$
+S_t = \alpha y_{t-1} + (1 - \alpha)(S_{t-1} + b_{t-1})
+$$
+
+$$
+b_t = \gamma (S_{t} - S_{t-1}) + (1 - \gamma)b_{t-1}
+$$
 
 <figure markdown>
   ![EXP 2](./img/Zeitserienanalyse/exp2.png){ width="800" }
   <figcaption>Fig. 5 Zweifaches Exponentielles Glätten</figcaption>
 </figure>
 
-Hier wird nun der Trend mit berücksichtigt. Man sieht bei der Glättung, dass der Trend erkannt wird, jedoch eine Änderung im Trend erst verzögert wahrgenommen wird. Auch die Vorhersagen können nur den aktuellen Trend weiterführen und keine Änderungen vorhersagen. Das liegt daran, dass die Saison Komponente feht um brauchbare Vorhersagen treffen zu können.
+Hier wird nun der Trend mitberücksichtigt. Man sieht bei der Glättung, dass der Trend erkannt wird, jedoch eine Änderung im Trend erst verzögert wahrgenommen wird. Auch die Vorhersagen können nur den aktuellen Trend weiterführen und keine Änderungen vorhersagen. Das liegt daran, dass die Saison Komponente fehlt um brauchbare Vorhersagen treffen zu können.
 
-Beim **dreifachen exponentiellen Glätten** wird auch diese Berücksichtigt.
+Beim **dreifachen exponentiellen Glätten** wird auch diese Berücksichtigt. Nun ergibt sich das folgende Modell:
+
+$$
+S_t = \alpha y_{t-1} + (1 - \alpha)(S_{t-1} + b_{t-1})
+$$
+
+$$
+b_t = \gamma (S_{t} - S_{t-1}) + (1 - \gamma)b_{t-1}
+$$
+
+$$
+I_t = \beta \frac{y_{t}}{S_t} + (1 - \beta)I_{t-L}
+$$
 
 <figure markdown>
   ![EXP 3](./img/Zeitserienanalyse/exp3.png){ width="800" }
@@ -127,29 +167,33 @@ Das saisonale ARIMA-Modell (SARIMA) ist eine Erweiterung des ARIMA-Modells (Auto
 Das SARIMA-Modell besteht aus mehreren Parametern, die seine Eigenschaften definieren:
 
 - Autoregressive (AR)-Komponente:  
-  Die AR-Komponente des SARIMA-Modells berücksichtigt die Abhängigkeit des aktuellen Werts einer Zeitreihe von vergangenen Werten. Der Parameter p gibt die Anzahl der vorherigen Werte an, die berücksichtigt werden sollen.
+  Die AR-Komponente des SARIMA-Modells berücksichtigt die Abhängigkeit des aktuellen Werts einer Zeitreihe von vergangenen Werten. Der Parameter p gibt die Anzahl der vorherigen Werte an, die berücksichtigt werden sollen.  
+  ![AR(p)](./img/Zeitserienanalyse/AR.png){ width="800" }  
 
 - Differenzierung (I):  
-  Die Differenzierungskomponente des SARIMA-Modells wird verwendet, um die Zeitreihe zu stationarisieren. Stationarität bedeutet, dass der Mittelwert und die Varianz der Daten über die Zeit konstant bleiben. Der Parameter d gibt die Anzahl der Differenzierungen an, die erforderlich sind, um die Stationarität zu erreichen.
+  Die Differenzierungskomponente des SARIMA-Modells wird verwendet, um die Zeitreihe stationär zu machen. Stationarität bedeutet, dass der Mittelwert und die Varianz der Daten über die Zeit konstant bleiben. Der Parameter d gibt die Anzahl der Differenzierungen an, die erforderlich sind, um die Stationarität zu erreichen.
 
 - Moving Average (MA)-Komponente:  
-  Die MA-Komponente des SARIMA-Modells bezieht sich auf den Einfluss der vorherigen Fehler auf den aktuellen Wert einer Zeitreihe. Der Parameter q gibt die Anzahl der vorherigen Fehler an, die berücksichtigt werden sollen.
+  Die MA-Komponente des SARIMA-Modells bezieht sich auf den Einfluss der vorherigen Fehler auf den aktuellen Wert einer Zeitreihe. Der Parameter q gibt die Anzahl der vorherigen Fehler an, die berücksichtigt werden sollen.  
+  ![MA(q)](./img/Zeitserienanalyse/MA.png){ width="800" }
 
 - Saisonale AR-Komponente:  
   Die saisonale AR-Komponente berücksichtigt die saisonale Abhängigkeit einer Zeitreihe. Sie bezieht sich auf die Abhängigkeit des aktuellen Werts von vergangenen Werten, die eine bestimmte Anzahl von Zeitschritten vor der aktuellen Periode liegen. Der Parameter P gibt die Anzahl der saisonalen AR-Terme an.
 
 - Saisonale Differenzierung:  
-  Die saisonale Differenzierung wird verwendet, um die saisonale Komponente der Zeitreihe zu entfernen und die Daten zu stationarisieren. Der Parameter D gibt die Anzahl der saisonalen Differenzierungen an.
+  Die saisonale Differenzierung wird verwendet, um die saisonale Komponente der Zeitreihe zu entfernen und die Daten stationär zu machen. Der Parameter D gibt die Anzahl der saisonalen Differenzierungen an.
 
 - Saisonale MA-Komponente:  
   Die saisonale MA-Komponente bezieht sich auf den Einfluss der vergangenen saisonalen Fehler auf den aktuellen Wert einer Zeitreihe. Der Parameter Q gibt die Anzahl der saisonalen MA-Terme an.
 
 - Saisonaler Index:  
-  Der Saison Index m gibt die länge einer Periode an.
+  Der Saison Index m gibt die Länge einer Periode an.
 
 Zusammen definieren diese Parameter die Struktur des SARIMA-Modells. 
 
-    SARIMA(p,d,q)(P,D,Q,m)
+$$
+SARIMA(p,d,q)(P,D,Q,m)
+$$
 
 Durch die Schätzung dieser Parameter und die Anpassung des Modells an die Daten können Vorhersagen für zukünftige Werte der Zeitreihe generiert werden. Dies ermöglicht die Berücksichtigung von saisonalen Mustern und den Einfluss vergangener Werte und Fehler auf die Vorhersagen.
 
@@ -158,7 +202,7 @@ Durch die Schätzung dieser Parameter und die Anpassung des Modells an die Daten
   <figcaption>Fig. 7 SARIMA</figcaption>
 </figure>
 
-Die Grafik zeigt eine Vorhersage mit Hilfe des SARIMA Modells für den Beispiel Datensatz (Fig. 1). Die Ergebnisse sind sehr gut, da es sich um eine nicht sonderlich komplexe Zeitserie handelt. Obwohl SARIMA-Modelle für die Modellierung von einfachen Zeitreihen mit saisonalen Mustern recht nützlich sind, haben sie einige Nachteile beim modellieren komlexer Strukturen. Hier haben moderne Ansätze weitaus besser Lösungen um komplexe Muster zu erfassen. 
+Die Grafik zeigt eine Vorhersage mit Hilfe des SARIMA Modells für den Beispiel Datensatz (Fig. 1). Die Ergebnisse sind sehr gut, da es sich um eine nicht sonderlich komplexe Zeitserie handelt. Obwohl SARIMA-Modelle für die Modellierung von einfachen Zeitreihen mit saisonalen Mustern recht nützlich sind, haben sie einige Nachteile beim Modellieren komplexer Strukturen. Hier haben moderne Ansätze weitaus besser Lösungen, um komplexe Muster zu erfassen. 
 
 ### 2.4 Moderne Ansätze
 
@@ -166,14 +210,18 @@ Moderne Ansätze in der Zeitreihenanalyse haben in den letzten Jahren an Bedeutu
 
 #### Recurrent Neural Networks
 
-Simple RNNs (Recurrent Neural Networks) sind eine Art von neuronalen Netzwerken, die für die Analyse von Zeitreihendaten verwendet werden. Im Gegensatz zu herkömmlichen neuronalen Netzwerken, die nur eine sequenzielle Verarbeitung von Daten ermöglichen, haben RNNs die Fähigkeit, Informationen über vergangene Schritte beizubehalten und in zukünftigen Schritten zu verwenden.
+Simple RNNs (Recurrent Neural Networks) sind eine Art von neuronalen Netzwerken, die für die Analyse von Zeitreihendaten verwendet werden. Im Gegensatz zu herkömmlichen neuronalen Netzwerken, die nur eine sequenzielle Verarbeitung von Daten ermöglichen, haben RNNs die Fähigkeit, Informationen über vergangene Schritte beizubehalten und in zukünftigen Schritten zu verwenden.  
+
+<figure markdown>
+  ![RNN](./img/Zeitserienanalyse/RNN.png){ width="600" }
+</figure>
+
+Die grundlegende Struktur eines einfachen RNNs besteht aus einer Schleife, die es ermöglicht, Informationen über vergangene Zeitschritte zu speichern und zurückzugeben. Bei der Verarbeitung von Zeitreihendaten wird das RNN für jeden Zeitschritt in der Sequenz iterativ ausgeführt. Für jeden Zeitschritt werden sowohl der aktuelle Eingabewert als auch der vorherige Zustand des RNNs als Eingabe verwendet, um den Ausgabewert zu generieren. Der Ausgabewert kann entweder als Vorhersage für den nächsten Zeitschritt oder als Teil eines umfassenderen Vorhersagemodells verwendet werden.
 
 <figure markdown>
   ![SRNN](./img/Zeitserienanalyse/sRNN.png){ width="150" }
   <figcaption>Fig. 8 Simple RNN</figcaption>
 </figure>
-
-Die grundlegende Struktur eines einfachen RNNs besteht aus einer Schleife, die es ermöglicht, Informationen über vergangene Zeitschritte zu speichern und zurückzugeben. Bei der Verarbeitung von Zeitreihendaten wird das RNN für jeden Zeitschritt in der Sequenz iterativ ausgeführt. Für jeden Zeitschritt werden sowohl der aktuelle Eingabewert als auch der vorherige Zustand des RNNs als Eingabe verwendet, um den Ausgabewert zu generieren. Der Ausgabewert kann entweder als Vorhersage für den nächsten Zeitschritt oder als Teil eines umfassenderen Vorhersagemodells verwendet werden.
 
 Die Hauptvorteile von einfachen RNNs für die Zeitreihenanalyse liegen in ihrer Fähigkeit, zeitliche Abhängigkeiten und Muster in den Daten zu erfassen. Durch die Verwendung des vorherigen Zustands als zusätzliche Information kann das RNN kontextbezogene Vorhersagen treffen und komplexe Muster in den Daten erkennen. Beispielsweise würde ein simple RNN im Satz "Die Wolken sind im _______", das Wort *Himmel* sehr leicht aus dem Kontext einfügen können.
 
@@ -200,7 +248,11 @@ LSTM (Long Short-Term Memory) ist eine Weiterentwicklung von RNNs (Recurrent Neu
   <figcaption>Fig. 11 Simple RNN vs LSTM Architektur</figcaption>
 </figure>
 
-Der wesentliche Unterschied zwischen LSTM und einfachen RNNs besteht darin, dass LSTM über eine sogenannte "Gedächtniszelle" und "Gatter" verfügt. Diese ermöglichen es, Informationen über lange Zeitschritte hinweg zu speichern und zu vergessen. Diese spezielle Architektur ermöglicht es LSTM Modellen, wichtige Informationen zu behalten und irrelevante Informationen zu verwerfen.
+Der wesentliche Unterschied zwischen LSTM und einfachen RNNs besteht darin, dass LSTM über eine sogenannte "Gedächtniszelle" und "Gatter" verfügt. Diese ermöglichen es, Informationen über lange Zeitschritte hinweg zu speichern und zu vergessen. Diese spezielle Architektur ermöglicht es LSTM Modellen, wichtige Informationen zu behalten und irrelevante Informationen zu verwerfen. Insgesamt ergibt sich daraus das folgende Modell:
+
+<figure markdown>
+  ![LSTM_modell](./img/Zeitserienanalyse/LSTM_modell.png){ width="600" }
+</figure>
 
 - Gedächtniszelle (Memory Cell):  
   Die Memory Cell besteht aus einer internen Zellzustandsvariable, die Informationen über den aktuellen Zustand der Gedächtniszelle enthält. Diese Variable wird während der Verarbeitung der Zeitreihe aktualisiert und kann Informationen über relevante Muster und Abhängigkeiten speichern.
@@ -211,7 +263,7 @@ Der wesentliche Unterschied zwischen LSTM und einfachen RNNs besteht darin, dass
 </figure>
 
 - Eingangsgatter (Input Gate):  
-  Das Eingangsgatter regelt, welche Informationen aus dem aktuellen Zeitschritt in das Zellgedächtnis übernommen werden sollen. Es verwendet eine Sigmoid-Aktivierungsfunktion, um zu bestimmen, welche Werte aktualisiert werden sollen.
+  Das Eingangsgatter $i_t=\sigma(U_i h_{t-1} + W_i x_t + b_i)$ regelt, welche Informationen aus dem aktuellen Zeitschritt in das Zellgedächtnis übernommen werden sollen. Es verwendet eine Sigmoid-Aktivierungsfunktion, um zu bestimmen, welche Werte aktualisiert werden sollen.
 
 <figure markdown>
   ![LSTM 3](./img/Zeitserienanalyse/LSTM_3.png){ width="400" }
@@ -219,7 +271,7 @@ Der wesentliche Unterschied zwischen LSTM und einfachen RNNs besteht darin, dass
 </figure>
 
 - Vergessensgatter (Forget Gate):  
-  Das Vergessensgatter bestimmt, welche Informationen aus dem vorherigen Zustand des LSTM verworfen werden sollen. Es hilft dabei, irrelevante Informationen zu vergessen und relevante Informationen beizubehalten. Es verwendet auch eine Sigmoid-Aktivierungsfunktion, um zu bestimmen, welche Werte verworfen werden sollen.
+  Das Vergessensgatter $f_t=\sigma(U_f h_{t-1} + W_f x_t + b_f)$ bestimmt, welche Informationen aus dem vorherigen Zustand des LSTM verworfen werden sollen. Es hilft dabei, irrelevante Informationen zu vergessen und relevante Informationen beizubehalten. Es verwendet auch eine Sigmoid-Aktivierungsfunktion, um zu bestimmen, welche Werte verworfen werden sollen.
 
 <figure markdown>
   ![LSTM 4](./img/Zeitserienanalyse/LSTM_4.png){ width="400" }
@@ -227,7 +279,7 @@ Der wesentliche Unterschied zwischen LSTM und einfachen RNNs besteht darin, dass
 </figure>
 
 - Ausgangsgatter (Output Gate):  
-  Das Ausgangsgatter bestimmt, welche Informationen aus dem aktuellen Zeitschritt als Ausgabe verwendet werden sollen. Es verwendet sowohl die vorherigen Zustände des LSTM als auch die aktualisierten Werte des Eingangsgatters und der Zellaktivierungsfunktion, um die Ausgabe zu generieren.
+  Das Ausgangsgatter $i_t=\sigma(U_o h_{t-1} + W_o x_t + b_o)$ bestimmt, welche Informationen aus dem aktuellen Zeitschritt als Ausgabe verwendet werden sollen. Es verwendet sowohl die vorherigen Zustände des LSTM als auch die aktualisierten Werte des Eingangsgatters und der Zellaktivierungsfunktion, um die Ausgabe zu generieren.
   
 <figure markdown>
   ![LSTM 5](./img/Zeitserienanalyse/LSTM_5.png){ width="400" }
@@ -235,6 +287,14 @@ Der wesentliche Unterschied zwischen LSTM und einfachen RNNs besteht darin, dass
 </figure>
 
 Durch die Verwendung dieser Architektur kann ein LSTM Informationen über lange Zeitschritte hinweg behalten und langfristige Abhängigkeiten in den Daten erfassen. Es kann wichtige Muster und Zusammenhänge in der Zeitreihe erkennen und diese Informationen zur Vorhersage zukünftiger Werte verwenden.
+
+### 2.5 Vergleich
+
+Bei der Betrachtung von Modellen für Zeitreihenanalyse können sowohl klassische als auch moderne Methoden ihre eigenen Vor- und Nachteile bieten. Die Wahl des geeigneten Modells hängt von den spezifischen Anforderungen des Anwendungsfalls ab.
+
+Klassische Methoden zeichnen sich durch ihre Einfachheit in der Implementierung, interpretierbare Ergebnisse und die Fähigkeit aus, mit wenigen Trainingsdaten gute Vorhersagen zu liefern. Diese Methoden, wie zum Beispiel ARIMA, eignen sich gut für stationäre Daten und Anwendungen, bei denen es wichtig ist, die zugrunde liegende Struktur der Zeitreihe zu verstehen. Sie bieten solide Grundlagen und sind in vielen praktischen Szenarien immer noch effektiv einsetzbar.
+
+Auf der anderen Seite bieten moderne Methoden, wie zum Beispiel LSTM Modelle, erweiterte Möglichkeiten zur Modellierung von Zeitreihen. Sie sind in der Lage, auch komplexe Muster und nichtlineare Zusammenhänge in den Daten zu erlernen. Moderne Methoden sind flexibler und können besser mit nicht stationären Daten umgehen, was in vielen realen Anwendungen von Vorteil ist. Sie können auch langfristige Prognosen liefern und sind in der Lage, komplexe Strukturen in den Daten zu modellieren.
 
 ## 3 Anwendungen
 ***TODO:*** Julian
