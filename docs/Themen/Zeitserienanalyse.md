@@ -297,10 +297,467 @@ Klassische Methoden zeichnen sich durch ihre Einfachheit in der Implementierung,
 Auf der anderen Seite bieten moderne Methoden, wie zum Beispiel LSTM Modelle, erweiterte Möglichkeiten zur Modellierung von Zeitreihen. Sie sind in der Lage, auch komplexe Muster und nichtlineare Zusammenhänge in den Daten zu erlernen. Moderne Methoden sind flexibler und können besser mit nicht stationären Daten umgehen, was in vielen realen Anwendungen von Vorteil ist. Sie können auch langfristige Prognosen liefern und sind in der Lage, komplexe Strukturen in den Daten zu modellieren.
 
 ## 3 Anwendungen
-***TODO:*** Julian
+
+Im Folgenden wird anhand eines konkreten Beispiels die Vorgehensweise bei der Implementierung von Zeitreihenanalysen erläutert.
+
+Es geht um den stündlichen Energieverbrauch in Amerika. Der Datensatz wurde zunächst eingelesen und dargestellt. Er enthält zwei Spalten. Eine mit Datum und Zeit und eine mit den Energiewerten.
+
+<figure markdown>
+  ![PJME_data](./img/Zeitserienanalyse/PJME_data.png)
+  <figcaption>Fig. 16 Energy Use in MW</figcaption>
+</figure>
+
+Als nächstes wurden die Daten aufbereitet. Dabei wurden Ausreißerwerte, die man oben in der Graphik erkennt, als auch fehlende Werte behandelt.
+
+Ein weiterer wichtiger Schritt bei der Aufbereitung der Daten es den Index richtig zu setzen. Da wir es mit einer Zeitreihe zutun haben, müssen wir die Spalte mit dem Datum und der Zeit ("Datetime") im Datensatz als unseren Index setzen.
+
+<figure markdown>
+  ![PJME_head](./img/Zeitserienanalyse/PJME_head.png)
+  <figcaption>Fig. 17 PJME data</figcaption>
+</figure>
+
+Indem der Index auf die Datums-/Zeitspalte gesetzt wird, ermöglicht es uns pandas, zeitbasierte Operationen effizient durchzuführen. Wir können auf einfache Weise auf bestimmte Zeiträume zugreifen, Daten nach Zeitintervallen aggregieren oder Zeitreihenplots erstellen.
+
+Dafür müssen wir die Zeitmerkmale noch konstruieren. Dies ist jedoch dank pandas schnell getan, nachdem wir den Index richtig gesetzt haben.
+
+```python
+def create_features(df):
+    """
+    Create time series features based on time series index.
+    """
+    df = df.copy()
+    df['hour'] = df.index.hour
+    df['dayofweek'] = df.index.dayofweek
+    df['quarter'] = df.index.quarter
+    df['month'] = df.index.month
+    df['year'] = df.index.year
+    df['dayofyear'] = df.index.dayofyear
+    df['dayofmonth'] = df.index.day
+    df['weekofyear'] = df.index.isocalendar().week
+    df['season'] = df['month'] % 12 // 3 + 1
+    return df
+
+season_names = {
+    1: "Winter",
+    2: "Spring",
+    3: "Summer",
+    4: "Fall"
+}
+
+df = create_features(df)
+df['season'] = df['season'].map(season_names)
+df.head()
+```
+<figure markdown>
+  ![PJME_full_head](./img/Zeitserienanalyse/PJME_full_head.png)
+  <figcaption>Fig. 17 PJME data with time features</figcaption>
+</figure>
+
+Mit den neuen Zeitmerkmalen können wir nun neue Erkenntnisse aus unseren Daten gewinnen, indem wir eine explorative Datenanalyse durchführen. Dafür können wir die Daten nach verschiedenen Zeitmerkmalen gruppieren und aggregieren.
+
+<figure markdown>
+  ![hour](./img/Zeitserienanalyse/hour.png)
+  <figcaption>Fig. 18 Energy consumption by hour</figcaption>
+</figure>
+
+<figure markdown>
+  ![dayofweek](./img/Zeitserienanalyse/dayofweek.png)
+  <figcaption>Fig. 19 Energy consumption by day of week</figcaption>
+</figure>
+
+<figure markdown>
+  ![month](./img/Zeitserienanalyse/month.png)
+  <figcaption>Fig. 19 Energy consumption by month</figcaption>
+</figure>
+
+<figure markdown>
+  ![dayofweek](./img/Zeitserienanalyse/year.png)
+  <figcaption>Fig. 20 Energy consumption by year</figcaption>
+</figure>
+
+<figure markdown>
+  ![season](./img/Zeitserienanalyse/season.png)
+  <figcaption>Fig. 20 Energy consumption by season</figcaption>
+</figure>
+
+<figure markdown>
+  ![oneyear](./img/Zeitserienanalyse/oneyear.png)
+  <figcaption>Fig. 20 Energy consumption in 2010</figcaption>
+</figure>
+
+Folgende Erkenntnisse können wir aus den Graphiken gewinnen:
+
+- Unsere Daten zeigen eine saisonale Komponente.
+- Der tägliche Höchstwert liegt gegen 18 Uhr, während der niedrigste Wert um 4 Uhr morgens auftritt.
+- Der geringste Energieverbrauch findet an Wochenenden (Samstag/Sonntag) statt.
+- Der höchste Energieverbrauch im Jahr tritt entweder am Jahresende oder in der Mitte des Jahres auf.
+- Es gibt keinen signifikanten Trend oder Veränderung im Gesamtenergieverbrauch im Zeitraum von 2002 bis 2018.
+- Der höchste Energieverbrauch tritt im Sommer und dann im Winter auf.
+
+Kommen wir nun zum Modellieren. Wir werden drei Ansätze verfolgen. SARIMA, Prophet und LSTM.
+Zunächst brauchen wir jedoch die zusätzlichen Zeitmerkmale nicht mehr. Wir können sie also entfernen, sodass wir wieder nur zwei Spalten im Datensatz haben. Anschließend resamplen wir die Daten auf tägliche Werte. Dies hat den Hintergrund, dass wir sonst zu viele Datenpunkte haben und die Modelle nicht mehr effizient trainiert werden können. Vor allem SARIMA und das LSTM benötigen viel Zeit zum Trainieren. Nach dem resamplen teilen wir die Daten noch in Trainings- und Testdaten auf. Wir verwenden 80% der Daten für das Training und 20% für das Testen.
+
+<figure markdown>
+  ![Daily](./img/Zeitserienanalyse/Daily.png)
+  <figcaption>Fig. 21 Daily energy consumption</figcaption>
+</figure>
+
+<figure markdown>
+  ![TrainTest](./img/Zeitserienanalyse/TrainTest.png)
+  <figcaption>Fig. 22 Train/Test split</figcaption>
+</figure>
+
+### 3.1 SARIMA
+
+Um ein (S)ARIMA Modell zu implimentieren sollte man folgende Schritte durchführen:
+
+1. **Überprüfung der Stationarität**: Bestimmen Sie, ob die Zeitreihe einen Trend oder eine Saisonalität aufweist. Falls dies der Fall ist, stellen Sie sicher, dass sie vor der Verwendung von ARIMA zur Vorhersage stationär ist.
+
+2. **Differenzierung**: Wenn die Zeitreihe nicht stationär ist, wenden Sie Differenzierung an, um sie stationär zu machen. Nehmen Sie die erste Differenz und prüfen Sie auf Stationarität. Wiederholen Sie dies gegebenenfalls, einschließlich saisonaler Differenzierung.
+
+3. **Aufteilung der Validierungsstichprobe**: Reservieren Sie einen Teil der Daten für die Validierung, um die Genauigkeit des Modells zu bewerten. Verwenden Sie eine Aufteilung der Daten in Trainings- und Testdaten.
+
+4. **Auswahl der AR- und MA-Terme**: Analysieren Sie die Autokorrelationsfunktion (ACF) und die partielle Autokorrelationsfunktion (PACF), um festzustellen, welche AR-Terme, MA-Terme oder beides im Modell enthalten sein sollten.
+
+5. **Modellerstellung**: Konstruieren Sie das ARIMA-Modell und legen Sie die Anzahl der Perioden fest, die basierend auf Ihren Anforderungen vorhergesagt werden sollen (N).
+
+6. **Validierung des Modells**: Vergleichen Sie die vorhergesagten Werte mit den tatsächlichen Werten in der Validierungsstichprobe.
+
+Die Bibliothek statsmodels bietet uns alle Funktionen, die wir für die Implementierung eines SARIMA-Modells benötigen. Mit `seasonal_decompose` zerlegen wir die Zeitreihe in ihre Trend-, saisonale und Restkomponenten. 
+
+<figure markdown>
+  ![decompose](./img/Zeitserienanalyse/decompose.png)
+  <figcaption>Fig. 23 Seasonal decompose</figcaption>
+</figure>
+
+Der Datensatz weißt eine sehr hohe sesonale Komponente auf.
+
+Die Funktion `adfuller` wird verwendet, um die Stationarität der Zeitreihe zu überprüfen. Ist der p-Wert kleiner als 0.05, so ist die Zeitreihe stationär.
+
+<figure markdown>
+  ![adfuller](./img/Zeitserienanalyse/adfuller.png)
+  <figcaption>Fig. 23 Adfuller test</figcaption>
+</figure>
+
+
+Da unser Datensatz bereits stationär ist, müssen wir keine weitere Differenzierung durchführen. Die Aufteilung in Trainings- und Testdaten ist ebenso bereits erledigt. Um die Werte für p, d und q zu bestimmen, können die ACF und PACF Plots verwenden. Es bietet sich jedoch noch eine effektivere Möglichkeit an. Die Funktion `auto_arima` der Bibliothek pmdarima. Diese Funktion führt eine Rastersuche durch, um die optimalen Parameter für unser Modell zu finden. Wir geben der Funktion auch an, dass wir eine saisonale Komponente haben.
+
+```python
+from pmdarima.arima import auto_arima
+
+auto_model = auto_arima(train, 
+           start_p=0, start_q=0, max_p=10, max_q=10, 
+           seasonal=True, m=7,
+           d=None, D=None, trace=True, 
+           error_action='ignore', suppress_warnings=True, 
+           stepwise=True, seasonal_test='ch')
+
+print(auto_model.summary())
+```
+Das "m" steht für die Anzahl der Perioden pro Saison. In unserem Fall haben wir 7 Tage gewählt. 30 Tage wäre auch möglich gewesen, jedoch ist die Berechnung dann sehr aufwendig.
+
+Diese Funktion liefert uns folgende Parameter: SARIMAX(2, 0, 0)x(1, 1, [1], 7)
+Diese Parameter können wir nun in unser Modell einsetzen.
+
+```python
+model = SARIMAX(train, 
+                order=(2, 0, 0),
+                seasonal_order=(1, 1, 1, 7),
+                enforce_stationarity=False, 
+                enforce_invertibility=False)
+
+result = model.fit()
+result.summary()
+```
+Nun können wir unser Modell auf die Testdaten anwenden.
+
+```python
+# Convert the datetime index of test data to numeric index
+test_numeric_index = range(len(test))
+
+# Predict using SARIMAX model
+predictions = result.predict(start=test_numeric_index[0], end=test_numeric_index[-1])
+
+# Assign the converted numeric index to predictions
+predictions.index = test.index
+```
+
+Anschließend können wir die Vorhersage mit den tatsächlichen Werten vergleichen.
+
+<figure markdown>
+  ![arimaprediction](./img/Zeitserienanalyse/arimaprediction.png)
+  <figcaption>Fig. 24 SARIMA prediction</figcaption>
+</figure>
+
+Um das Modell zu evaluieren und mit anderen Modellen vergleichen zu können haben wir noch den RMSE und MAPE berechnet.
+
+SARIMA RMSE:  126971.22
+
+SARIMA MAPE: 13.22%
+
+Das bedeutet, dass unser SARIMA Modell im Durchschnitt um 13.22% von den tatsächlichen Werten abweicht.
+
+### 3.2 Prophet
+
+Das Prophet-Modell ist ein vorausschauendes Zeitreihenmodell, das von Facebook entwickelt wurde. Es basiert auf einer Additiven Modellierung, die Trends, saisonale Effekte und Feiertage berücksichtigt.Prophet verwendet ein Modell, das aus drei Hauptkomponenten besteht.
+
+1. **Trendkomponente**: Prophet verwendet einen nichtlinearen Trendansatz, der saisonale Effekte und Veränderungen im Verlauf der Zeit berücksichtigt.
+
+2. **Saisonale Komponente**: Das Modell erfasst saisonale Muster, indem es periodische Effekte in der Zeitreihe identifiziert und modelliert.
+
+3. **Feiertage: Prophet ermöglicht die Berücksichtigung von spezifischen Feiertagen und Ereignissen, die Auswirkungen auf die Zeitreihe haben können.
+
+Das Modell verwendet auch zusätzliche Anpassungsparameter, um Unsicherheiten in den Daten zu modellieren und robuste Prognosen zu generieren. Prophet ist bekannt für seine Benutzerfreundlichkeit und seine Fähigkeit, mit unvollständigen oder fehlenden Daten umzugehen. Es bietet auch eine einfache Syntax und unterstützt die automatische Erkennung von saisonalen Mustern.
+
+Angesichts dessen, was die Implementierung sehr einfach. Wir mussten lediglich unsere Spaltennamen anpassen, sodass Prophet diese versteht. Die erste Spalte muss den Namen "ds" haben und die zweite Spalte den Namen "y". Die Spalte "ds" enthält die Zeitstempel und die Spalte "y" enthält die Werte der Zeitreihe. Daraufhin kann man das Model auch schon trainieren.
+
+```python
+from prophet import Prophet
+
+# Format data for prophet model using ds and y
+pjme_train_prophet = train.reset_index() \
+    .rename(columns={'Datetime':'ds',
+                     'PJME_MW':'y'})
+model = Prophet()
+model.fit(pjme_train_prophet)
+
+# Predict on test set with model
+pjme_test_prophet = test.reset_index() \
+    .rename(columns={'Datetime':'ds',
+                     'PJME_MW':'y'})
+
+pjme_test_fcst = model.predict(pjme_test_prophet)
+```
+
+Wenn man sich den Kopf der Daten anschaut, hat Prophet viele neue Spalten hinzugefügt, dessen Werte man jedoch schwer interpretieren kann. Plottet man nun die Vorhersagen, erhalten wir folgende Graphik:
+
+<figure markdown>
+  ![prophetpredictions](./img/Zeitserienanalyse/prophetpredictions.png)
+  <figcaption>Fig. 25 Prophet predictions</figcaption>
+</figure>
+
+Die Vorhersagen sehen sehr gut aus. Prophet hat die Trends und Saisonalitäten sehr gut erkannt.
+
+
+<figure markdown>
+  ![prophetvsactuals](./img/Zeitserienanalyse/prophetvsactuals.png)
+  <figcaption>Fig. 26 Prophet predictions vs actuals</figcaption>
+</figure>
+
+Die Funktion `plot_components` zeigt die einzelnen Komponenten des Modells an. Die Komponenten sind der Trend, die saisonalen Effekte und die Feiertage (ähnlich wie beim SARIMA decompose).
+
+Der RMSE und MAPE für das Prophet Modell sind: 78333.89 und 7.48%. Dies ist eine deutliche Verbesserung gegenüber dem SARIMA Modell.
+
+Dank Prophet können wir auch einfach die Ferientage in unserem Modell berücksichtigen. Dazu müssen wir lediglich die Ferientage in ein Dataframe laden und Prophet mitteilen, dass es diese berücksichtigen soll.
+
+```python
+from pandas.tseries.holiday import USFederalHolidayCalendar as calendar
+
+cal = calendar()
+train_holidays = cal.holidays(start=train.index.min(),
+                              end=train.index.max())
+test_holidays = cal.holidays(start=test.index.min(),
+                             end=test.index.max())
+
+# Create a dataframe with holiday, ds columns
+df['date'] = df.index.date
+df['is_holiday'] = df.date.isin([d.date() for d in cal.holidays()])
+holiday_df = df.loc[df['is_holiday']] \
+    .reset_index() \
+    .rename(columns={'Datetime':'ds'})
+holiday_df['holiday'] = 'USFederalHoliday'
+holiday_df = holiday_df.drop(['PJME_MW','date','is_holiday'], axis=1)
+
+holiday_df['ds'] = pd.to_datetime(holiday_df['ds'])
+
+# Setup and train model with holidays
+model_with_holidays = Prophet(holidays=holiday_df)
+model_with_holidays.fit(train.reset_index() \
+                            .rename(columns={'Datetime':'ds',
+                                             'PJME_MW':'y'}))
+# Predict on training set with model
+pjme_test_fcst_with_hols = \
+    model_with_holidays.predict(df=test.reset_index() \
+                                    .rename(columns={'Datetime':'ds'}))
+```
+
+Berechnen wir nun erneut den RMSE, stellen wir fest, dass sich dieser nicht verbessert hat.
+
+RMSE mit Ferientagen: 78439.56
+
+RMSE ohne Ferientage: 78333.89
+
+Er hat sich sogar etwas verschlechtert. Dies liegt daran, dass die Ferientage in unserem Datensatz nicht sehr aussagekräftig sind, weil unser Datensatz zu groß ist. Es sind zu viele Datenpunkte vorhanden, weswegen die Ferientage eher als Rauschen betrachtet werden.
+
+Prophet bietet auch noch eine einfach Funktion `make_future_dataframe`, um einen zukünftigten Datenrahmen zu erstellen und Vorhersagen zu treffen. Man gibt im Parameter "periods" an, wie groß der Datenrahmen sein soll. Als Beispiel haben wir 5 Jahre genommen (365 * 24 * 5).
+
+```python
+future = model.make_future_dataframe(periods=365*24*5, freq='h', include_history=False)
+forecast = model_with_holidays.predict(future)
+```
+
+<figure markdown>
+  ![future](./img/Zeitserienanalyse/future.png)
+  <figcaption>Fig. 27 Prophet prediction on future dataframe</figcaption>
+</figure>
+
+
+### 3.3 LSTM
+
+Bevor wir mit dem LSTM Modell starten, müssen wir unsere Daten nochmals etwas vorbereiten. Wir müssen die Daten normalisieren, damit das Modell besser trainiert werden kann. Dazu verwenden wir die MinMaxScaler Funktion von sklearn.
+
+```python
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import LSTM
+from keras.layers import Dropout
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow import keras
+from tensorflow.keras import layers
+from kerastuner.tuners import RandomSearch
+from keras.callbacks import EarlyStopping
+
+# Data preprocessing
+scaler = MinMaxScaler(feature_range=(0, 1))
+scaled_train = scaler.fit_transform(train)  # Scale the training data between 0 and 1
+
+# Create the training data
+X_train = []
+y_train = []
+for i in range(60, len(train)):
+    X_train.append(scaled_train[i-60:i, 0])  # Create sequences of 60 previous values as input (lookback period)
+    y_train.append(scaled_train[i, 0])  # Current value as output
+X_train, y_train = np.array(X_train), np.array(y_train)
+
+# Reshape the data
+X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
+# Reshape the input data to be 3-dimensional (samples, timesteps, features) for LSTM model
+```
+
+Anschließend können wir das Modell erstellen. Wir verwenden hierfür die Keras Tuner Library, um die besten Hyperparameter zu finden. Dazu müssen wir eine Funktion erstellen, die das Modell erstellt. Diese Funktion wird dann vom Keras Tuner aufgerufen und die Hyperparameter werden übergeben. Wir verwendet zwei LSTM Layer mit jeweils einem Dropout Layer. Die Anzahl der Neuronen und die Dropout Rate werden vom Keras Tuner optimiert. Am Ende wird noch ein Dense Layer mit einem Neuron verwendet als Output Layer.
+
+```python
+def build_model(hp):
+    model = keras.Sequential()
+    model.add(layers.LSTM(units=hp.Int('units', min_value=32, max_value=128, step=32), 
+                          return_sequences=True, 
+                          input_shape=(X_train.shape[1], 1)))
+    model.add(layers.Dropout(rate=hp.Float('dropout', min_value=0.1, max_value=0.5, step=0.1)))
+    model.add(layers.LSTM(units=hp.Int('units', min_value=32, max_value=128, step=32), 
+                          return_sequences=False))
+    model.add(layers.Dropout(rate=hp.Float('dropout', min_value=0.1, max_value=0.5, step=0.1)))
+    model.add(layers.Dense(units=1))
+    model.compile(optimizer='adam', loss='mean_squared_error')
+    return model
+
+# Initialize Keras Tuner
+tuner = RandomSearch(
+    build_model,
+    objective='val_loss',
+    max_trials=5,  # how many model configurations would you like to test?
+    executions_per_trial=3,  # how many trials per variation? (same model could perform differently)
+    directory='project',
+    project_name='Energy Consumption LSTM')
+
+# Summary of the search space
+tuner.search_space_summary()
+
+# Perform hyperparameter search
+tuner.search(X_train, y_train, epochs=5, validation_split=0.2)
+
+# Summary of the results
+tuner.results_summary()
+```
+
+Als Ausgabe erhalten wir die besten Modelle mit den jeweiligen Hyperparametern. Nun nehmen wir ein Modell und trainieren es mit "Early Stopping". Early Stopping stoppt das Training, wenn der Validierungsfehler nicht mehr sinkt. Dadurch wird Overfitting verhindert. Wir nutzen 50 Epochen zum Trainieren. Anschließend plotten wir den Trainings- und Validierungsfehler. Anhand des Plots können wir erkennen, ob das Model overfittet ist oder nicht und ggf. ein anderes Modell auswählen.
+
+```python
+from keras.callbacks import EarlyStopping
+
+# Choose the best model
+best_model = tuner.get_best_models(num_models=5)[3]
+
+# Define early stopping
+early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=5)
+
+# Fit the model
+history = best_model.fit(X_train, y_train, epochs = 50, validation_split=0.2, callbacks=[early_stop])
+```
+
+<figure markdown>
+  ![loss](./img/Zeitserienanalyse/loss.png)
+  <figcaption>Fig. 28 Training and Validation Loss</figcaption>
+</figure>
+
+Wir können erkennen, das unser Modell nicht overfittet ist. Der Validierungsfehler und Trainingsfehler nehmen kontinuierlich ab und konvergieren schließen. Sie überschneiden sich mehrmals und halten dasselbe Nievaue bis zum Ende der 50 Epochen. Das bedeutet, dass das Modell unsere Test Daten genau so gut vorhersagen kann wie die Trainingsdaten.
+
+Um nun Vorhersagen treffen zu können, müssen wir unsere Testdaten genauso vorbereiten wie die Trainingsdaten.
+
+```python
+# Prepare the test data similarly to the training data
+
+# Get the inputs for the test data
+inputs = univariate_df[len(univariate_df) - len(test) - 60:].values
+inputs = inputs.reshape(-1, 1)  # Reshape the input data to have a single feature column
+
+inputs = scaler.transform(inputs)  # Scale the test data using the same scaler used for training
+
+X_test = []
+for i in range(60, inputs.shape[0]):
+    X_test.append(inputs[i-60:i, 0])  # Create sequences of 60 previous values as input for the test data (lookback period)
+X_test = np.array(X_test)
+
+X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+# Reshape the test data to be 3-dimensional (samples, timesteps, features) for LSTM model
+```
+
+Anschließend können wir die Vorhersagen treffen und die Ergebnisse plotten.
+
+```python
+# Make predictions with the best model
+predicted_energy_consumption = best_model.predict(X_test)
+
+# Inverse transform to get real values
+predicted_energy_consumption = scaler.inverse_transform(predicted_energy_consumption)
+```
+
+<figure markdown>
+  ![LSTMpredictions](./img/Zeitserienanalyse/LSTMpredictions.png)
+  <figcaption>Fig. 29 LSTM predictions</figcaption>
+</figure>
+
+Das LSTM trifft sehr präzise vorhersagen. Wir erhlaten folgende Werte für den RMSE und den MAPE:
+
+LSTM RMSE: 48014.44
+
+LSTM MAPE 4.71%
+
+Unser LSTM hast das Prophet Modell um 3% Abweichung geschlagen. Das ist ein sehr gutes Ergebnis. Das LSTM schließt von allen Modellen am besten ab.
+
+Hier nochmal der Vergleich der drei Modelle:
+
+<figure markdown>
+  ![Vergleich](./img/Zeitserienanalyse/Vergleich.png)
+  <figcaption>Fig. 30 Vergleich SARIMA, Prophet and LSTM</figcaption>
+</figure>
 
 ## 4 Fazit
-***TODO:*** Julian
+
+Zeitserien haben drei wichtige Merkmale: Autokorrelation, Trend und Saison. Autokorrelation beschreibt den Zusammenhang zwischen den Werten einer Zeitreihe und ihren verzögerten Versionen. Der Trend bezieht sich auf die langfristige Veränderung des Mittelwerts der Zeitreihe. Die Saison bezieht sich auf wiederkehrende Muster in den Daten, die mit bestimmten Zeiträumen zusammenhängen.
+
+Die Zeitreihenanalyse wird in verschiedenen Anwendungsgebieten eingesetzt, darunter Merkmalsanalyse, Vorhersage, Glättung und Anomalieerkennung. Bei der Analyse der Merkmale werden Muster und Trends in der Zeitreihe identifiziert. Die Vorhersage befasst sich mit der Schätzung zukünftiger Werte basierend auf vergangenen Daten. Die Glättung reduziert Rauschen und Schwankungen, um den Trend deutlicher zu erkennen. Die Anomalieerkennung identifiziert abnormale Muster oder Ausreißer in der Zeitreihe.
+
+Klassische Ansätze in der Zeitreihenanalyse umfassen das exponentielle Glätten und das SARIMA-Modell. Das exponentielle Glätten reduziert kurzfristige Schwankungen und erfasst den Trend, aber berücksichtigt keine Saisonkomponente. Das SARIMA-Modell modelliert Zeitreihen mit saisonalen Mustern und berücksichtigt Autoregression, Differenzierung und Moving Average mit saisonalen Komponenten.
+
+SARIMA-Modelle zeichnen sich durch ihre einfache Interpretierbarkeit und die geringe Anzahl an Tuning-Parametern im Vergleich zu maschinellen Lernmodellen aus. Allerdings erfordern sie stationäre Daten und haben Schwierigkeiten bei der Bewältigung mehrerer saisonaler Muster. Zudem sind sie rechenintensiv für große Datensätze.
+
+Moderne Ansätze in der Zeitreihenanalyse haben in den letzten Jahren an Bedeutung gewonnen. Sie umfassen maschinelle Lernverfahren (XGBoost, Prophet) und Deep Learning (LSTM). Diese Ansätze können komplexe Muster erfassen und präzisere Vorhersagen liefern.
+
+Prophet eignet sich gut für Zeitreihen mit starken saisonalen Effekten und mehreren Saisons an historischen Daten. Es kann mehrere Saisonalitäten gut handhaben und ermöglicht die flexible Einbeziehung von Feiertagseffekten und zusätzlichen Regressoren. Die Anwendung von Prophet erfordert weniger Verständnis über die zugrunde liegenden Implementierungen. Allerdings sind die Komponenten der Vorhersage nicht so leicht interpretierbar wie bei ARIMA und das Modell ist weniger effektiv für hochfrequente Daten.
+
+Das LSTM ist eine Art von rekurrentem neuronalen Netzwerk, das komplexe nichtlineare Beziehungen modellieren kann. Es eignet sich gut für Zeitreihenprognosen, bei denen langfristige Abhängigkeiten eine Rolle spielen. Es kann auch mehrere saisonale Muster wie Prophet handhaben. Allerdings ist das Training von LSTM-Modellen langsam, insbesondere für große Datensätze, und es besteht die Gefahr der Überanpassung ohne sorgfältige Gestaltung und Regularisierung. Die Vorhersagen von LSTM-Modellen sind schwer interpretierbar und erfordern große Datenmengen für das Training.
+
+Bei der Auswahl des geeigneten Modells für die Zeitreihenprognose ist es wichtig, die Merkmale der Daten und die Prioritäten der Aufgabenstellung zu berücksichtigen. ARIMA eignet sich gut für interpretierbare Vorhersagen, während LSTMs bei komplexen Mustern und großen Datensätzen überlegen sein können. Prophet bietet eine flexible und benutzerfreundliche Lösung für die Bewältigung mehrerer Saisonalitäten. Letztendlich gibt es kein universell bestes Modell für alle Arten von Zeitreihendaten. Die Wahl hängt von den spezifischen Anforderungen und Eigenschaften der Daten ab.
 
 ## 5 Weiterführendes Material
 
