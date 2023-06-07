@@ -768,7 +768,10 @@ Hier Link zum Podcast.
 Hier einfach Youtube oder THD System embedden.
 
 ### 5.3 Demo
-Hier Link zum Demo Video + Link zum GIT Repository mit dem Demo Code.
+
+Link zur Code Demonstration: 
+
+Link zum Repository: <https://github.com/Julian-Ivanov/Energy-Consumption-TSA.git>
 
 
 ## 6 Literaturliste
