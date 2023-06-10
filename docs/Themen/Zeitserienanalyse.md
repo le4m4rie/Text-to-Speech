@@ -3,11 +3,30 @@ von *Andreas Greiner, Julian Ivanov und Stephan Zahnweh*
 
 ## Abstract
 
-***TODO:*** Andreas
+Sei es in der Produktion, der Energieversorgung oder im Finanzwesen, heutzutage ist es einfacher denn je große Datenmengen aufzunehmen und als Zeitreihen abzuspeichern. Neben klassischen Methoden gibt es auch im Bereich Deep Learning viele neue Möglichkeiten, diese Daten sinnvoll zu nutzen. Daher wurde in dieser Arbeit einen Podcast so wie ein Fachvortrag und eine Code-Demonstration zum Thema Zeitreihenanalyse erarbeitet und eine schriftliche Ausarbeitung dazu erstellt.
+
+Der Podcast liefert oberflächliche Informationen zu Zeitserien, deren Verarbeitung mit klassischen und modernen Methoden und Anwendungsgebiete. Er dient dazu, jedermann einen groben Einblick in das Thema zu bieten und etwaiges Interesse zu wecken. Dabei ist er größtenteils an Personen ohne Vorwissen in Datenverarbeitung oder Deep Learning adressiert. 
+
+Der Fachvortrag hingegen liefert tiefe Einblicke in den Aufbau und die Merkmale von Zeitserien. 
+Es werden klassische Ansätze wie exponentielles Glätten oder SARIMA vorgestellt und zum Vergleich auch moderne Methoden wie Recurrent Neural Networks und LSTMs präsentiert.
+Insgesamt geht der Fachvortrag deutlich tiefer in die Materie hinein und stellt auch die Mathematik hinter den Algorithmen vor. 
+
+Als letzter Teil der Arbeit werden verschiedene Methoden anhand einer Code-Demonstration vorgestellt und miteinander verglichen.
+Es wird vorgestellt, wie man einen Beispieldatensatz mittels SARIMA-Modell, Prophet-Algorithmus von Facebook und LSTM verarbeiten kann. 
+Dazu werden mit den jeweiligen Modellen Vorhersagen erstellt und die Genauigkeit deren miteinander verglichen.
+Das Code-Beispiel steht frei zur Verfügung und kann von jedem ausgeführt und abgeändert werden.
 
 ## 1 Einleitung / Motivation
 
-***TODO:*** Andreas
+Die Zeitserienanalyse ist eine sehr effektive Methode der Analyse und Interpretation von Daten, welche sich im Laufe der Zeit ändern. Sie ermöglicht es, Phänomene wie Muster oder Trends in Daten zu verstehen und dieses Verständnis für Vorhersagen und Prognosen oder zur Erkennung von Anomalien zu nutzen. Dieses Werkzeug kann in verschiedensten Bereichen der Daten wie etwa dem Finanzwesen, bei Wettervorhersagen, in der Medizin oder in etlichen weiteren Gebieten Anwendung finden. Hierbei ist das einzig Wichtige, dass sinnvolle Daten erhoben werden können und diese Daten ein zu interpretierendes Muster aufweisen. 
+
+Anwendungsbeispiele sind zum Beispiel die Langzeitüberwachung von Herzfrequenz oder Blutdruck zur frühzeitigen Erkennung von Krankheiten oder die Analyse von Kursverläufen von Aktien oder Währungen, um gezielt Vorhersagen treffen zu können und so am Finanzmarkt Profit zu erzielen. Auch in der Produktion findet die Zeitserienanalyse viele Anwendungsbereiche, etwa die Planung von Lieferketten, um im Zeitalter von Just-In-Time-Delivery die Produktionsketten so effizient wie möglich zu gestalten. Während der Corona-Pandemie wurden sicherlich auch Simulationen basierend auf Zeitserien durchgeführt, um die Auswirkungen von Lockdowns, Impfungen und Booster-Impfungen zu analysieren und prognostizieren.
+
+In vielen dieser Bereiche wird Zeitserienanalyse bereits lange mit klassischen Modellen betrieben, und das oft auch sehr erfolgreich. Diese Modelle basieren auf statistischen Ansätzen und der Annahme, dass die Muster in den Daten anhand mathematischer Funktionen beschrieben werden können. Während diese Methoden eher als klassische Methoden bezeichnet werden, haben sich in den letzten Jahren auch immer mehr modernere Ansätze mit Deep-Learning Methoden etabliert. Diese nutzen verschiedene Versionen von neuronale Netzen wie RNNs oder LSTMs, um auch komplexere Muster wie nicht-lineare Abhängigkeiten in den Daten zu erkennen und modellieren zu können. Im Gegensatz zu den klassischen Methoden benötigen diese Ansätze jedoch meist große Datensätze, um gute Prognosen erstellen zu können.
+
+Damit eine Zeitreihenanalyse somit gute Ergebnisse erzielen kann, muss je nach Problemstellung und Datenlage ein sinnvolles Verfahren gewählt werden. Neben der Größe des Datensatzes ist auch Expertenwissen über die Daten entscheiden, um eine gute Auswahl der verfügbaren Variablen treffen zu können. Außerdem besitzen Datensätze oft Ausreißer oder fehlende Datenpunkte und müssen daher überprüft und angepasst werden. 
+
+Um somit eine gute Übersicht über verschiedene Ansätze und ein Grundverständnis über die nötige Datenaufbereitung zu haben, werden im folgenden klassische sowie moderne Ansätze präsentiert und anhand eines Beispiels eine Zeitreihenanalyse durchgeführt.
 
 ## 2 Methoden
 
@@ -245,7 +264,7 @@ Durch die Verwendung dieser Architektur kann ein LSTM Informationen über lange 
 ## 5 Weiterführendes Material
 
 ### 5.1 Podcast
-Hier Link zum Podcast.
+[Der Campus Talk – Silicon Forest – Folge 4](https://der-campustalk-der-thd.letscast.fm/episode/der-campus-talk-silicon-forest-folge-4)
 
 ### 5.2 Talk
 Hier einfach Youtube oder THD System embedden.
