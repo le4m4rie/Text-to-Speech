@@ -26,7 +26,7 @@ In vielen dieser Bereiche wird Zeitserienanalyse bereits lange mit klassischen M
 
 Damit eine Zeitreihenanalyse somit gute Ergebnisse erzielen kann, muss je nach Problemstellung und Datenlage ein sinnvolles Verfahren gewählt werden. Neben der Größe des Datensatzes ist auch Expertenwissen über die Daten entscheiden, um eine gute Auswahl der verfügbaren Variablen treffen zu können. Außerdem besitzen Datensätze oft Ausreißer oder fehlende Datenpunkte und müssen daher überprüft und angepasst werden. 
 
-Um somit eine gute Übersicht über verschiedene Ansätze und ein Grundverständnis über die nötige Datenaufbereitung zu haben, werden im folgenden klassische sowie moderne Ansätze präsentiert und anhand eines Beispiels eine Zeitreihenanalyse durchgeführt.
+Um somit eine gute Übersicht über verschiedene Ansätze und ein Grundverständnis über die nötige Datenaufbereitung zu haben, werden im Folgenden klassische sowie moderne Ansätze präsentiert und anhand eines Beispiels eine Zeitreihenanalyse durchgeführt.
 
 ## 2 Methoden
 
@@ -326,9 +326,9 @@ Es geht um den stündlichen Energieverbrauch in Amerika. Der Datensatz wurde zun
   <figcaption>Fig. 16 Energy Use in MW</figcaption>
 </figure>
 
-Als nächstes wurden die Daten aufbereitet. Dabei wurden Ausreißerwerte, die man oben in der Graphik erkennt, als auch fehlende Werte behandelt.
+Als nächstes wurden die Daten aufbereitet. Dabei wurden Ausreißer Werte, die man oben in der Graphik erkennt, als auch fehlende Werte behandelt.
 
-Ein weiterer wichtiger Schritt bei der Aufbereitung der Daten es den Index richtig zu setzen. Da wir es mit einer Zeitreihe zutun haben, müssen wir die Spalte mit dem Datum und der Zeit ("Datetime") im Datensatz als unseren Index setzen.
+Ein weiterer wichtiger Schritt bei der Aufbereitung der Daten es den Index richtig zu setzen. Da wir es mit einer Zeitreihe zu tun haben, müssen wir die Spalte mit dem Datum und der Zeit ("Datetime") im Datensatz als unseren Index setzen.
 
 <figure markdown>
   ![PJME_head](./img/Zeitserienanalyse/PJME_head.png)
@@ -428,7 +428,7 @@ Zunächst brauchen wir jedoch die zusätzlichen Zeitmerkmale nicht mehr. Wir kö
 
 ### 3.1 SARIMA
 
-Um ein (S)ARIMA Modell zu implimentieren sollte man folgende Schritte durchführen:
+Um ein (S)ARIMA Modell zu implementieren sollte man folgende Schritte durchführen:
 
 1. **Überprüfung der Stationarität**: Bestimmen Sie, ob die Zeitreihe einen Trend oder eine Saisonalität aufweist. Falls dies der Fall ist, stellen Sie sicher, dass sie vor der Verwendung von ARIMA zur Vorhersage stationär ist.
 
@@ -449,7 +449,7 @@ Die Bibliothek statsmodels bietet uns alle Funktionen, die wir für die Implemen
   <figcaption>Fig. 23 Seasonal decompose</figcaption>
 </figure>
 
-Der Datensatz weißt eine sehr hohe sesonale Komponente auf.
+Der Datensatz weißt eine sehr hohe saisonale Komponente auf.
 
 Die Funktion `adfuller` wird verwendet, um die Stationarität der Zeitreihe zu überprüfen. Ist der p-Wert kleiner als 0.05, so ist die Zeitreihe stationär.
 
@@ -518,7 +518,7 @@ Das bedeutet, dass unser SARIMA Modell im Durchschnitt um 13.22% von den tatsäc
 
 ### 3.2 Prophet
 
-Das Prophet-Modell ist ein vorausschauendes Zeitreihenmodell, das von Facebook entwickelt wurde. Es basiert auf einer Additiven Modellierung, die Trends, saisonale Effekte und Feiertage berücksichtigt.Prophet verwendet ein Modell, das aus drei Hauptkomponenten besteht.
+Das Prophet-Modell ist ein vorausschauendes Zeitreihenmodell, das von Facebook entwickelt wurde. Es basiert auf einer Additiven Modellierung, die Trends, saisonale Effekte und Feiertage berücksichtigt. Prophet verwendet ein Modell, das aus drei Hauptkomponenten besteht.
 
 1. **Trendkomponente**: Prophet verwendet einen nichtlinearen Trendansatz, der saisonale Effekte und Veränderungen im Verlauf der Zeit berücksichtigt.
 
@@ -608,7 +608,7 @@ RMSE ohne Ferientage: 78333.89
 
 Er hat sich sogar etwas verschlechtert. Dies liegt daran, dass die Ferientage in unserem Datensatz nicht sehr aussagekräftig sind, weil unser Datensatz zu groß ist. Es sind zu viele Datenpunkte vorhanden, weswegen die Ferientage eher als Rauschen betrachtet werden.
 
-Prophet bietet auch noch eine einfach Funktion `make_future_dataframe`, um einen zukünftigten Datenrahmen zu erstellen und Vorhersagen zu treffen. Man gibt im Parameter "periods" an, wie groß der Datenrahmen sein soll. Als Beispiel haben wir 5 Jahre genommen (365 * 24 * 5).
+Prophet bietet auch noch eine einfach Funktion `make_future_dataframe`, um einen zukünftigen Datenrahmen zu erstellen und Vorhersagen zu treffen. Man gibt im Parameter "periods" an, wie groß der Datenrahmen sein soll. Als Beispiel haben wir 5 Jahre genommen (365 * 24 * 5).
 
 ```python
 future = model.make_future_dataframe(periods=365*24*5, freq='h', include_history=False)
@@ -708,7 +708,7 @@ history = best_model.fit(X_train, y_train, epochs = 50, validation_split=0.2, ca
   <figcaption>Fig. 28 Training and Validation Loss</figcaption>
 </figure>
 
-Wir können erkennen, das unser Modell nicht overfittet ist. Der Validierungsfehler und Trainingsfehler nehmen kontinuierlich ab und konvergieren schließen. Sie überschneiden sich mehrmals und halten dasselbe Nievaue bis zum Ende der 50 Epochen. Das bedeutet, dass das Modell unsere Test Daten genau so gut vorhersagen kann wie die Trainingsdaten.
+Wir können erkennen, dass unser Modell nicht overfittet ist. Der Validierungsfehler und Trainingsfehler nehmen kontinuierlich ab und konvergieren schließen. Sie überschneiden sich mehrmals und halten dasselbe Niveau bis zum Ende der 50 Epochen. Das bedeutet, dass das Modell unsere Test Daten genauso gut vorhersagen kann wie die Trainingsdaten.
 
 Um nun Vorhersagen treffen zu können, müssen wir unsere Testdaten genauso vorbereiten wie die Trainingsdaten.
 
@@ -745,7 +745,7 @@ predicted_energy_consumption = scaler.inverse_transform(predicted_energy_consump
   <figcaption>Fig. 29 LSTM predictions</figcaption>
 </figure>
 
-Das LSTM trifft sehr präzise vorhersagen. Wir erhlaten folgende Werte für den RMSE und den MAPE:
+Das LSTM trifft sehr präzise vorhersagen. Wir erhalten folgende Werte für den RMSE und den MAPE:
 
 LSTM RMSE: 48014.44
 
